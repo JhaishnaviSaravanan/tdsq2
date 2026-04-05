@@ -14,44 +14,26 @@ class AudioInput(BaseModel):
 
 @app.post("/")
 def process_audio(data: AudioInput):
-    try:
-        audio_bytes = base64.b64decode(data.audio_base64)
-        audio, sr = sf.read(io.BytesIO(audio_bytes))
+    audio_bytes = base64.b64decode(data.audio_base64)
+    audio, sr = sf.read(io.BytesIO(audio_bytes))
 
-        if len(audio.shape) > 1:
-            audio = audio.mean(axis=1)
+    if len(audio.shape) > 1:
+        audio = audio.mean(axis=1)
 
-        audio = audio.astype(float)
+    audio = audio.astype(float)
 
-        return {
-            "rows": int(len(audio)),
-            "columns": ["amplitude"],
-            "mean": {"amplitude": float(np.mean(audio))},
-            "std": {"amplitude": float(np.std(audio))},
-            "variance": {"amplitude": float(np.var(audio))},
-            "min": {"amplitude": float(np.min(audio))},
-            "max": {"amplitude": float(np.max(audio))},
-            "median": {"amplitude": float(np.median(audio))},
-            "mode": {"amplitude": float(stats.mode(audio, keepdims=True)[0][0])},
-            "range": {"amplitude": float(np.max(audio) - np.min(audio))},
-            "allowed_values": {"amplitude": []},
-            "value_range": {"amplitude": [float(np.min(audio)), float(np.max(audio))]},
-            "correlation": []
-        }
-
-    except:
-        return {
-            "rows": 0,
-            "columns": [],
-            "mean": {},
-            "std": {},
-            "variance": {},
-            "min": {},
-            "max": {},
-            "median": {},
-            "mode": {},
-            "range": {},
-            "allowed_values": {},
-            "value_range": {},
-            "correlation": []
-        }
+    return {
+        "rows": int(len(audio)),
+        "columns": ["amplitude"],
+        "mean": {"amplitude": float(np.mean(audio))},
+        "std": {"amplitude": float(np.std(audio))},
+        "variance": {"amplitude": float(np.var(audio))},
+        "min": {"amplitude": float(np.min(audio))},
+        "max": {"amplitude": float(np.max(audio))},
+        "median": {"amplitude": float(np.median(audio))},
+        "mode": {"amplitude": float(stats.mode(audio, keepdims=True)[0][0])},
+        "range": {"amplitude": float(np.max(audio) - np.min(audio))},
+        "allowed_values": {"amplitude": []},
+        "value_range": {"amplitude": [float(np.min(audio)), float(np.max(audio))]},
+        "correlation": []
+    }
